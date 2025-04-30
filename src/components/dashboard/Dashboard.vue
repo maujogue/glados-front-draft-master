@@ -6,7 +6,8 @@
       :types="types"
       :statuses="statuses"
       :filter="filter"
-      @set-filter="onSetFilter"/>
+      @set-filter="onSetFilter"
+      @manage-rooms="showRoomModal = true"/>
     <CardGrid
       :entities="entities"
       @edit="onEditEntity" />
@@ -18,6 +19,14 @@
       :visible="!!selectedEntity"
       @close="selectedEntity = null"
       @save="onSaveEntityEdit"/>
+    <RoomEditModal
+      v-if="showRoomModal"
+      :visible="showRoomModal"
+      :rooms="rooms"
+      @close="showRoomModal = false"
+      @save="onSaveRoom"
+      @delete="onDeleteRoom"
+      @update="onUpdateRoom"/>
   </div>
 </template>
 
@@ -26,6 +35,7 @@ import coreApi from "@/providers/core-api"
 import CardGrid from "@/components/ui/CardGrid.vue"
 import Filters from "@/components/dashboard/Filters.vue"
 import EntityEditModal from "@/components/ui/EntityEditModal.vue"
+import RoomEditModal from "@/components/ui/RoomEditModal.vue"
 
 export default {
   name: "Dashboard",
@@ -33,6 +43,7 @@ export default {
     CardGrid,
     Filters,
     EntityEditModal,
+    RoomEditModal,
   },
   created() {
     this.fetchFilters()
@@ -52,6 +63,7 @@ export default {
         status: "all",
       },
       selectedEntity: null,
+      showRoomModal: false,
     }
   },
   methods: {
@@ -106,6 +118,30 @@ export default {
           type: this.filter.type,
           status: this.filter.status,
         })
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    async onSaveRoom(room) {
+      try {
+        await coreApi.glados.addRoom(room)
+        this.fetchFilters()
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    async onDeleteRoom(roomId) {
+      try {
+        await coreApi.glados.deleteRoom(roomId)
+        this.fetchFilters()
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    async onUpdateRoom({ id, name }) {
+      try {
+        await coreApi.glados.updateRoom(id, { name })
+        this.fetchFilters()
       } catch (e) {
         console.error(e)
       }

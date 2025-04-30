@@ -2,7 +2,6 @@ import coreApiClient from "@/providers/core-api/CoreApi"
 
 export default {
   getEntities(params = {}) {
-    console.log(params)
     return coreApiClient.sendRequest("get", "/entities", params)
   },
   getEntity(id) {
@@ -26,7 +25,16 @@ export default {
   getRooms() {
     return coreApiClient.sendRequest("get", "/rooms", {})
   },
+  addRoom(data) {
+    return coreApiClient.sendRequest("post", "/room", data)
+  },
+  deleteRoom(id) {
+    return coreApiClient.sendRequest("delete", `/room/${id}`)
+  },
+  updateRoom(id, data) {
+    return coreApiClient.sendRequest("patch", `/room/${id}`, data)
+  },
   getTypes() {
-    return coreApiClient.sendRequest("get", "/types", {})
+    return coreApiClient.sendRequest("get", "/entities/types", {})
   },
 }
