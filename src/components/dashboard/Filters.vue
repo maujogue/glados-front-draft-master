@@ -6,15 +6,15 @@
       class="flex flex-row gap-2 overflow-x-auto pb-2">
       <button
         v-for="room in rooms"
-        :key="room"
-        @click="$emit('set-filter', { key: 'room', value: room })"
+        :key="room.id"
+        @click="$emit('set-filter', { key: 'room', value: room.id })"
         :class="[
           'px-4 py-1 rounded-full border',
-          filter.room === room
+          filter.room === room.id
             ? 'bg-indigo-500 text-white border-indigo-500'
             : 'bg-white text-gray-700 border-gray-300 hover:bg-indigo-50',
         ]">
-        {{ room }}
+        {{ room.name }}
       </button>
       <button
         @click="$emit('set-filter', { key: 'room', value: 'all' })"
@@ -86,10 +86,25 @@
 export default {
   name: "Filters",
   props: {
-    rooms: Array,
-    types: Array,
-    statuses: Array,
-    filter: Object,
+    rooms: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
+    types: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
+    statuses: {
+      type: Array,
+      required: true,
+      default: () => [],
+    },
+    filter: {
+      type: Object,
+      required: true,
+    },
   },
 }
 </script>

@@ -1,5 +1,7 @@
 <template>
-  <div class="card-entity bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition flex flex-col gap-4 min-h-[170px] relative">
+  <div
+    class="card-entity bg-white p-6 rounded-xl shadow-md hover:shadow-lg transition flex flex-col gap-4 min-h-[170px] relative"
+    @click="onEdit">
     <div class="flex items-center justify-between w-full">
       <div class="flex items-center gap-4">
         <span class="flex items-center justify-center w-12 h-12 rounded-full bg-indigo-100">
@@ -18,10 +20,11 @@
       </div>
       <div class="flex items-center">
         <template v-if="showSwitch">
-          <template v-if="localEntity.status === 'unavailable'">
-          </template>
+          <template v-if="localEntity.status === 'unavailable'"> </template>
           <template v-else>
-            <label class="inline-flex items-center cursor-pointer">
+            <label
+              class="inline-flex items-center cursor-pointer"
+              @click.stop>
               <input
                 type="checkbox"
                 class="sr-only peer"
@@ -53,18 +56,21 @@
           v-model="sliderValue"
           @input="onSliderInput"
           @change="onSliderChange"
-          class="w-full mt-2 accent-indigo-500"/>
+          class="w-full mt-2 accent-indigo-500"
+          @click.stop/>
         <!-- Air conditioner or heater: up/down -->
         <div
           v-else-if="['air_conditioner', 'heater'].includes(localEntity.type)"
           class="flex gap-2 mt-2">
           <button
+            @click.stop
             @click="changeValue(-1)"
             :disabled="isLoading || localEntity.value <= 10"
             class="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 text-lg font-bold">
             -
           </button>
           <button
+            @click.stop
             @click="changeValue(1)"
             :disabled="isLoading || localEntity.value >= 35"
             class="px-2 py-1 rounded bg-gray-200 hover:bg-gray-300 text-lg font-bold">
@@ -232,6 +238,9 @@ export default {
       } finally {
         this.isLoading = false
       }
+    },
+    onEdit() {
+      this.$emit("edit", this.localEntity.id)
     },
   },
 }

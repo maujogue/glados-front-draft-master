@@ -3,7 +3,8 @@
     <CardEntity
       v-for="entity in entities"
       :key="entity.id"
-      :entity="entity" />
+      :entity="entity"
+      @edit="$emit('edit', $event)"/>
   </div>
 </template>
 

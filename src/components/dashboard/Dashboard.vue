@@ -7,7 +7,17 @@
       :statuses="statuses"
       :filter="filter"
       @set-filter="onSetFilter"/>
-    <CardGrid :entities="entities" />
+    <CardGrid
+      :entities="entities"
+      @edit="onEditEntity" />
+    <EntityEditModal
+      v-if="selectedEntity"
+      :entity="selectedEntity"
+      :rooms="rooms"
+      :types="types"
+      :visible="!!selectedEntity"
+      @close="selectedEntity = null"
+      @save="onSaveEntityEdit"/>
   </div>
 </template>
 
@@ -15,9 +25,15 @@
 import coreApi from "@/providers/core-api"
 import CardGrid from "@/components/ui/CardGrid.vue"
 import Filters from "@/components/dashboard/Filters.vue"
+import EntityEditModal from "@/components/ui/EntityEditModal.vue"
 
 export default {
   name: "Dashboard",
+  components: {
+    CardGrid,
+    Filters,
+    EntityEditModal,
+  },
   created() {
     this.fetchFilters()
     this.getEntities()
@@ -35,11 +51,8 @@ export default {
         type: "all",
         status: "all",
       },
+      selectedEntity: null,
     }
-  },
-  components: {
-    CardGrid,
-    Filters,
   },
   methods: {
     async fetchFilters() {
@@ -68,12 +81,34 @@ export default {
     },
     onSetFilter({ key, value }) {
       this.filter[key] = value
-      console.log("filter", this.filter)
       this.getEntities({
         room: this.filter.room,
         type: this.filter.type,
         status: this.filter.status,
       })
+    },
+    async onEditEntity(entityId) {
+      try {
+        const entity = this.entities.find((e) => e.id === entityId)
+        if (entity) {
+          this.selectedEntity = entity
+        }
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    async onSaveEntityEdit(form) {
+      try {
+        await coreApi.glados.updateEntity(this.selectedEntity.id, form)
+        this.selectedEntity = null
+        await this.getEntities({
+          room: this.filter.room,
+          type: this.filter.type,
+          status: this.filter.status,
+        })
+      } catch (e) {
+        console.error(e)
+      }
     },
   },
 }
