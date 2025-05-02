@@ -4,6 +4,9 @@ export default {
   getEntities(params = {}) {
     return coreApiClient.sendRequest("get", "/entities", params)
   },
+  getEntitiesTTS(params = {}) {
+    return coreApiClient.sendRequest("get", "/entities/tts", params)
+  },
   getEntity(id) {
     return coreApiClient.sendRequest("get", `/entities/${id}`)
   },

@@ -1,16 +1,27 @@
 <template>
   <div class="flex flex-col gap-5">
     <span class="text-indigo-600 font-bold text-2xl">Dashboard</span>
-    <Filters
-      :rooms="rooms"
-      :types="types"
-      :statuses="statuses"
-      :filter="filter"
-      @set-filter="onSetFilter"
-      @manage-rooms="showRoomModal = true"/>
+
+    <!-- Responsive Flex Layout -->
+    <div class="flex flex-wrap md:flex-nowrap gap-4">
+      <div class="flex-[2] min-w-0">
+        <Filters
+          :rooms="rooms"
+          :types="types"
+          :statuses="statuses"
+          :filter="filter"
+          @set-filter="onSetFilter"
+          @manage-rooms="showRoomModal = true"/>
+      </div>
+      <div class="flex-[1] min-w-0">
+        <TTS_speaker :filter="filter" />
+      </div>
+    </div>
+
     <CardGrid
       :entities="entities"
       @edit="onEditEntity" />
+
     <EntityEditModal
       v-if="selectedEntity"
       :entity="selectedEntity"
@@ -19,6 +30,7 @@
       :visible="!!selectedEntity"
       @close="selectedEntity = null"
       @save="onSaveEntityEdit"/>
+
     <RoomEditModal
       v-if="showRoomModal"
       :visible="showRoomModal"
@@ -36,10 +48,12 @@ import CardGrid from "@/components/ui/CardGrid.vue"
 import Filters from "@/components/dashboard/Filters.vue"
 import EntityEditModal from "@/components/ui/EntityEditModal.vue"
 import RoomEditModal from "@/components/ui/RoomEditModal.vue"
+import TTS_speaker from "@/components/dashboard/TTS_speaker.vue"
 
 export default {
   name: "Dashboard",
   components: {
+    TTS_speaker,
     CardGrid,
     Filters,
     EntityEditModal,
