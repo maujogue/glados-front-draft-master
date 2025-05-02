@@ -71,23 +71,7 @@
     <div
       v-if="isLoading"
       class="mt-4 text-center">
-      <svg
-        class="animate-spin h-8 w-8 mx-auto text-indigo-500"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="none"
-        viewBox="0 0 24 24">
-        <circle
-          class="opacity-25"
-          cx="12"
-          cy="12"
-          r="10"
-          stroke="currentColor"
-          stroke-width="4"></circle>
-        <path
-          class="opacity-75"
-          fill="currentColor"
-          d="M4 12a8 8 0 018-8v8z"></path>
-      </svg>
+
     </div>
     <div
       v-else-if="summary"
@@ -230,8 +214,26 @@ export default {
           this.audioUrl = ""
         }
       } catch (error) {
-        console.error("Error fetching TTS audio:", error)
-        this.summary = "Error generating summary."
+        // Fallback: fetch entities and generate a simple summary
+        try {
+          const entities = await coreApi.glados.getEntities(this.filter)
+          if (entities && entities.length) {
+            this.summary = entities
+              .map(
+                (e) =>
+                  `${e.name}${
+                    e.value !== null && e.value !== undefined
+                      ? `: ${e.value}`
+                      : ""
+                  }`
+              )
+              .join(", ")
+          } else {
+            this.summary = "No entities found."
+          }
+        } catch (fallbackError) {
+          this.summary = "Error generating summary."
+        }
         this.audioUrl = ""
       } finally {
         this.isLoading = false
